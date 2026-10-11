@@ -9,13 +9,14 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
+/develop-eggs/
+/dist/
+/downloads/
+/eggs/
+/.eggs/
+# 注意：原模板的 `lib/` 会连带忽略掉前端目录 web/lib/，这里改为只忽略仓库根目录的 lib/
+/lib/
+/lib64/
 parts/
 sdist/
 var/
@@ -70,6 +71,9 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+
+# 前端源码目录（上面的 /lib/ 已限定根目录，此处显式兜底，防止被误忽略）
+!web/lib/
 
 # PyBuilder
 .pybuilder/
@@ -179,3 +183,28 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# ===================== 本项目专属规则 =====================
+
+# ⚠️ 桌面客户端运行时生成的 Edge/Chrome 浏览器配置目录
+#    内含浏览历史、Cookie（含 bilibili 设备标识）、表单缓存，属个人隐私，必须忽略
+.appdata/
+
+# Capacitor / Android 构建产物与依赖（948 个文件，全部可重新生成）
+mobile-app/node_modules/
+mobile-app/www/
+mobile-app/android/build/
+mobile-app/android/app/build/
+mobile-app/android/capacitor-cordova-android-plugins/build/
+mobile-app/android/.gradle/
+mobile-app/android/local.properties
+
+# 打包产物：APK 建议走 GitHub Release 分发，不入库
+# 如果确实要随仓库提交，把下一行注释掉，再用 git add -f 强行添加
+*.apk
+*.aab
+
+# 本机运行时数据与机器相关配置（含绝对路径，换机即失效）
+runtime.json
+*.db
+*.db-wal
+*.db-shm
