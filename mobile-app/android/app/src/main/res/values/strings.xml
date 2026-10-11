@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">B站历史记录仪</string>
+    <string name="title_activity_main">B站历史记录仪</string>
+    <string name="package_name">cn.bilihistory.mobile</string>
+    <string name="custom_url_scheme">cn.bilihistory.mobile</string>
+</resources>

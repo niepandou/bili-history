@@ -1,0 +1,17 @@
+{
+  "appId": "cn.bilihistory.mobile",
+  "appName": "B站历史记录仪",
+  "webDir": "www",
+  "backgroundColor": "#f4f6fa",
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

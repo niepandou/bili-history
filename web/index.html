@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fb7299">
+<meta name="description" content="记录并分类你在哔哩哔哩的观看历史">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="B站历史">
+<title>B站历史记录仪</title>
+
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- 电脑端：左侧功能导航 -->
+  <nav class="rail" id="rail">
+    <div class="brand">B<span>站</span></div>
+
+    <button class="rail-item" data-nav="overview">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3v9h9a9 9 0 0 0-9-9z"/></svg>
+      <span>概览占比</span>
+    </button>
+    <button class="rail-item" data-nav="videos">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 4v14M3 9h18M3 14h18"/></svg>
+      <span>分类视频</span>
+    </button>
+    <button class="rail-item" data-nav="settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.77l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-1 1.47V21a2 2 0 1 1-4 0v-.11a1.6 1.6 0 0 0-1.05-1.47 1.6 1.6 0 0 0-1.77.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.47-1H3a2 2 0 1 1 0-4h.11A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.33-1.77L4.21 7.1a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.77.33H9a1.6 1.6 0 0 0 1-1.47V3a2 2 0 1 1 4 0v.11a1.6 1.6 0 0 0 1 1.47 1.6 1.6 0 0 0 1.77-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.33 1.77V9a1.6 1.6 0 0 0 1.47 1H21a2 2 0 1 1 0 4h-.11a1.6 1.6 0 0 0-1.47 1z"/></svg>
+      <span>设置</span>
+    </button>
+
+    <div class="rail-spacer"></div>
+    <button class="rail-item ghost" id="btnTriple" title="展开三栏" aria-pressed="false">
+      <svg id="railModeIcon" viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="16" rx="1.5"/><rect x="16" y="4" width="5" height="16" rx="1.5"/></svg>
+      <span id="railModeText">三栏</span>
+    </button>
+    <button class="rail-item ghost" id="btnSync">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      <span>同步</span>
+    </button>
+  </nav>
+
+  <!-- 主区域 -->
+  <main class="main">
+    <header class="topbar">
+      <div class="tb-left">
+        <h1>B站历史记录仪</h1>
+        <p class="sub" id="tbSub">加载中…</p>
+      </div>
+      <div class="tb-right">
+        <span class="pill" id="pillMode" hidden>桌面客户端</span>
+        <span class="pill" id="pillSync">未同步</span>
+        <button class="btn ghost-btn small" id="btnViewMode" title="切换三栏 / 单栏">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="16" rx="1.5"/><rect x="16" y="4" width="5" height="16" rx="1.5"/></svg>
+          <span id="vmText">三栏</span>
+        </button>
+        <button class="btn primary small" id="btnInstall" hidden>安装到手机</button>
+        <button class="btn primary small" id="btnSyncTop">同步记录</button>
+      </div>
+    </header>
+
+    <div class="grid" id="grid" data-mode="triple">
+
+      <!-- 第一栏：概览占比 -->
+      <section class="panel" data-panel="overview">
+        <div class="stats" id="stats"></div>
+
+        <div class="card">
+          <div class="card-h"><h3>分类观看占比</h3><span class="hint">按观看次数</span></div>
+          <div class="donut-wrap">
+            <div class="donut" id="donut"></div>
+            <ul class="legend" id="legend"></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>近 30 天观看趋势</h3></div>
+          <div class="bars" id="trend"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>观看时段分布</h3><span class="hint">0 - 24 时</span></div>
+          <div class="bars hours" id="hours"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>常看的 UP 主</h3><span class="hint">Top 6</span></div>
+          <div class="uplist" id="uplist"></div>
+        </div>
+      </section>
+
+      <!-- 第二栏：分类视频 -->
+      <section class="panel" data-panel="videos">
+        <div class="card">
+          <div class="filters">
+            <input id="search" class="input" placeholder="搜索标题 / UP主 / 分区">
+            <select id="sort" class="input small-sel">
+              <option value="recent">最近观看</option>
+              <option value="count">观看最多</option>
+              <option value="title">标题排序</option>
+            </select>
+            <button class="btn ghost-btn small" id="btnCover" title="封面图需要从 B站 CDN 联网加载，关闭后列表响应更快">显示封面</button>
+          </div>
+          <div class="chips" id="chips"></div>
+        </div>
+
+        <div class="vlist" id="vlist"></div>
+        <div class="more"><button class="btn ghost-btn" id="btnMore">加载更多</button></div>
+      </section>
+
+      <!-- 第三栏：设置 -->
+      <section class="panel" data-panel="settings">
+
+        <div class="card">
+          <div class="card-h"><h3>账号与同步</h3></div>
+          <label class="lbl">B站 Cookie（需包含 SESSDATA）</label>
+          <textarea id="ck" class="input ta" rows="3" placeholder="登录 bilibili.com 后从浏览器复制 Cookie，粘贴到这里"></textarea>
+          <p class="tip">获取方式：浏览器登录 B站 → F12 → Network → 任选一个 api.bilibili.com 请求 → 复制 Request Headers 里的 Cookie。<br>直接整段粘贴即可，程序会自动清洗（去 <code>Cookie:</code> 前缀、换行、全角符号）。</p>
+          <div class="row-btns">
+            <button class="btn primary" id="btnSyncSet">立即同步</button>
+            <button class="btn" id="btnDeep">补齐分区（深度）</button>
+            <button class="btn ghost-btn" id="btnDiag">一键自检</button>
+          </div>
+          <pre class="log diag" id="diagOut" hidden></pre>
+          <div class="switch-row">
+            <label class="switch"><input type="checkbox" id="swAuto"><i></i><b>自动同步</b></label>
+            <select id="intervalSel" class="input tiny">
+              <option value="30">30 分钟</option>
+              <option value="60">1 小时</option>
+              <option value="180">3 小时</option>
+              <option value="720">12 小时</option>
+            </select>
+          </div>
+          <pre class="log" id="log"></pre>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>开机自启动</h3><span class="hint" id="asHint"></span></div>
+          <label class="switch big"><input type="checkbox" id="swBoot"><i></i><b>随系统启动并在后台运行</b></label>
+          <p class="tip">开启后会在系统登录项写入启动命令，后台静默运行，打开浏览器即可访问。</p>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>数据保存路径</h3></div>
+          <label class="lbl">数据目录</label>
+          <div class="row-btns">
+            <input id="dataDir" class="input" placeholder="D:\\MyData\\BiliHistory">
+            <button class="btn" id="btnBrowse" hidden>浏览…</button>
+            <button class="btn" id="btnApplyDir">迁移</button>
+            <button class="btn ghost-btn" id="btnOpenDir">打开目录</button>
+          </div>
+          <p class="tip" id="dirInfo"></p>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>分类关键词规则</h3><span class="hint">优先级高于内置词典</span></div>
+          <div class="rules-head">
+            <input id="rk" class="input" placeholder="关键词">
+            <select id="rc" class="input tiny"></select>
+            <button class="btn" id="btnAddRule">添加</button>
+          </div>
+          <div id="ruleList" class="rule-list"></div>
+          <div class="row-btns"><button class="btn ghost-btn" id="btnRecat">按当前词典重算全部分类</button></div>
+        </div>
+
+        <div class="card" id="installTip">
+          <div class="card-h"><h3>安装到手机（App 形式）</h3><span class="hint">装好后有独立图标，无地址栏</span></div>
+          <ol class="steps">
+            <li>手机与电脑连同一个 WiFi，用手机浏览器打开上面的局域网地址。</li>
+            <li><b>Android / Chrome</b>：右上角菜单 → 「安装应用」或「添加到主屏幕」。</li>
+            <li><b>iPhone / Safari</b>：底部「分享」 → 「添加到主屏幕」。</li>
+            <li>之后从桌面图标进入就是全屏 App，界面为底部三标签的手机版。</li>
+          </ol>
+          <div class="row-btns"><button class="btn primary" id="btnInstall2">立即安装</button></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>访问与数据</h3></div>
+          <ul class="addr" id="addrList"></ul>
+          <div class="row-btns">
+            <button class="btn" id="btnExportCsv">导出 CSV</button>
+            <button class="btn" id="btnExportJson">导出 JSON</button>
+            <button class="btn ghost-btn" id="btnDemo">填充演示数据</button>
+            <button class="btn danger" id="btnClear">清空历史</button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- 手机端：底部功能栏 -->
+<nav class="tabbar" id="tabbar">
+  <button class="tab-item is-active" data-nav="overview">
+    <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3v9h9a9 9 0 0 0-9-9z"/></svg><span>概览</span>
+  </button>
+  <button class="tab-item" data-nav="videos">
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 4v14M3 9h18M3 14h18"/></svg><span>视频</span>
+  </button>
+  <button class="tab-item" data-nav="settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .32 1.77l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-1 1.47V21a2 2 0 1 1-4 0v-.11a1.6 1.6 0 0 0-1.05-1.47 1.6 1.6 0 0 0-1.77.32l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.47-1H3a2 2 0 1 1 0-4h.11A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.33-1.77L4.21 7.1a2 2 0 1 1 2.83-2.83l.06.06a1.6 1.6 0 0 0 1.77.33H9a1.6 1.6 0 0 0 1-1.47V3a2 2 0 1 1 4 0v.11a1.6 1.6 0 0 0 1 1.47 1.6 1.6 0 0 0 1.77-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.6 1.6 0 0 0-.33 1.77V9a1.6 1.6 0 0 0 1.47 1H21a2 2 0 1 1 0 4h-.11a1.6 1.6 0 0 0-1.47 1z"/></svg><span>设置</span>
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="/assets/app.js"></script>
+</body>
+</html>
